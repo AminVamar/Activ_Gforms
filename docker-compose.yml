@@ -1,0 +1,47 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: activgform
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d activgform"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  api:
+    build: .
+    image: activgform-api:latest
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      HTTP_PORT: ${HTTP_PORT:-8083}
+      DATABASE_URL: postgres://postgres:postgres@postgres:5432/activgform?sslmode=disable
+      TEST_SOURCE_URL: http://host.docker.internal:${TEST_PORT:-8081}/tests
+      PUBLIC_WEBHOOK_URL: https://${NGROK_DOMAIN}/api/v1/webhook/submission
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    ports:
+      - "${HTTP_PORT:-8083}:${HTTP_PORT:-8083}"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  ngrok:
+    image: ngrok/ngrok:latest
+    restart: unless-stopped
+    command: ["http", "--url=${NGROK_DOMAIN}", "api:${HTTP_PORT:-8083}"]
+    environment:
+      NGROK_AUTHTOKEN: ${NGROK_AUTHTOKEN}
+    ports:
+      - "4040:4040"
+    depends_on:
+      - api
+
+volumes:
+  pgdata:

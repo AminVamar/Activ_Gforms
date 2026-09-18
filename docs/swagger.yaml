@@ -1,0 +1,899 @@
+basePath: /
+definitions:
+  domain.Answer:
+    properties:
+      answer_text:
+        type: string
+      attempt_id:
+        type: integer
+      correct_answers:
+        items:
+          type: string
+        type: array
+      graded_at:
+        type: string
+      graded_by:
+        type: string
+      id:
+        type: integer
+      item_id:
+        type: string
+      position:
+        type: integer
+      question_id:
+        type: integer
+      question_text:
+        type: string
+      question_type:
+        type: integer
+      score:
+        type: integer
+    type: object
+  domain.Attempt:
+    properties:
+      auto_submitted:
+        type: boolean
+      branch_code:
+        type: string
+      branch_id:
+        type: integer
+      branch_name:
+        type: string
+      created_at:
+        type: string
+      form_id:
+        type: string
+      form_session_id:
+        type: integer
+      id:
+        type: integer
+      intern_id:
+        type: integer
+      intern_name:
+        type: string
+      intern_phone:
+        type: string
+      needs_grading:
+        type: boolean
+      pending_count:
+        type: integer
+      response_id:
+        type: string
+      scored:
+        type: integer
+      submitted_at:
+        type: string
+      test_id:
+        type: integer
+      test_title:
+        type: string
+      total_questions:
+        type: integer
+    type: object
+  domain.Branch:
+    properties:
+      code:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  domain.FormSession:
+    properties:
+      closed_at:
+        type: string
+      created_at:
+        type: string
+      duration_minutes:
+        type: integer
+      edit_url:
+        type: string
+      form_id:
+        type: string
+      form_url:
+        type: string
+      id:
+        type: integer
+      item_map:
+        additionalProperties:
+          format: int64
+          type: integer
+        type: object
+      question_count:
+        type: integer
+      respondent_url:
+        type: string
+      status:
+        type: string
+      test_id:
+        type: integer
+      test_title:
+        type: string
+    type: object
+  domain.GradeInput:
+    properties:
+      answer_id:
+        type: integer
+      score:
+        type: integer
+    type: object
+  domain.Intern:
+    properties:
+      branch_code:
+        type: string
+      branch_id:
+        type: integer
+      branch_name:
+        type: string
+      created_at:
+        type: string
+      first_name:
+        type: string
+      id:
+        type: integer
+      last_name:
+        type: string
+      middle_name:
+        type: string
+      phone:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  domain.InternListItem:
+    properties:
+      attempts_count:
+        type: integer
+      branch_code:
+        type: string
+      branch_id:
+        type: integer
+      branch_name:
+        type: string
+      created_at:
+        type: string
+      first_name:
+        type: string
+      id:
+        type: integer
+      last_name:
+        type: string
+      middle_name:
+        type: string
+      needs_grading:
+        type: boolean
+      phone:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  domain.Option:
+    properties:
+      id:
+        type: integer
+      is_correct:
+        type: boolean
+      question_id:
+        type: integer
+      text:
+        type: string
+    type: object
+  domain.Question:
+    properties:
+      content:
+        type: string
+      id:
+        type: integer
+      options:
+        items:
+          $ref: '#/definitions/domain.Option'
+        type: array
+      type:
+        type: integer
+    type: object
+  domain.Submission:
+    properties:
+      answers:
+        items:
+          $ref: '#/definitions/domain.SubmittedAnswer'
+        type: array
+      auto_submitted:
+        type: boolean
+      branch_code:
+        type: string
+      branch_name:
+        type: string
+      first_name:
+        type: string
+      form_id:
+        type: string
+      last_name:
+        type: string
+      middle_name:
+        type: string
+      phone:
+        type: string
+      response_id:
+        type: string
+      submitted_at:
+        type: string
+    type: object
+  domain.SubmittedAnswer:
+    properties:
+      answer:
+        type: string
+      item_id:
+        type: string
+      question_id:
+        type: integer
+    type: object
+  domain.Test:
+    properties:
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      questions:
+        items:
+          $ref: '#/definitions/domain.Question'
+        type: array
+      test_type:
+        type: integer
+      title:
+        type: string
+    type: object
+  http.AttemptResponse:
+    properties:
+      answers:
+        items:
+          $ref: '#/definitions/domain.Answer'
+        type: array
+      attempt:
+        $ref: '#/definitions/domain.Attempt'
+      score:
+        type: integer
+      source_available:
+        type: boolean
+      status:
+        type: string
+      total:
+        type: integer
+    type: object
+  http.BranchesResponse:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/domain.Branch'
+        type: array
+      total:
+        type: integer
+    type: object
+  http.CreateBranchRequest:
+    properties:
+      code:
+        example: "6900"
+        type: string
+      name:
+        example: ЦБО Рудаки
+        type: string
+    type: object
+  http.CreateFormRequest:
+    properties:
+      duration_minutes:
+        example: 30
+        type: integer
+      test_id:
+        example: 35
+        type: integer
+    type: object
+  http.ErrorResponse:
+    properties:
+      error:
+        type: string
+    type: object
+  http.GradeRequest:
+    properties:
+      grades:
+        items:
+          $ref: '#/definitions/domain.GradeInput'
+        type: array
+    type: object
+  http.GradeResponse:
+    properties:
+      attempt:
+        $ref: '#/definitions/http.AttemptResponse'
+      attempt_id:
+        type: integer
+      changed:
+        type: integer
+      score:
+        type: integer
+      status:
+        example: graded
+        type: string
+      total:
+        type: integer
+    type: object
+  http.HealthResponse:
+    properties:
+      status:
+        example: ok
+        type: string
+    type: object
+  http.InternCardResponse:
+    properties:
+      attempts:
+        items:
+          $ref: '#/definitions/domain.Attempt'
+        type: array
+      attempts_total:
+        type: integer
+      intern:
+        $ref: '#/definitions/domain.Intern'
+    type: object
+  http.ListResponse:
+    properties:
+      items: {}
+      limit:
+        type: integer
+      offset:
+        type: integer
+      total:
+        type: integer
+    type: object
+  http.PingResponse:
+    properties:
+      ok:
+        example: true
+        type: boolean
+    type: object
+  http.RescoreResponse:
+    properties:
+      attempt_id:
+        type: integer
+      changed:
+        type: integer
+      score:
+        type: integer
+      status:
+        type: string
+      total:
+        type: integer
+    type: object
+  http.SubmissionResponse:
+    properties:
+      attempt_id:
+        type: integer
+      duplicate:
+        type: boolean
+      intern_id:
+        type: integer
+      needs_grading:
+        type: boolean
+      score:
+        type: integer
+      scored:
+        type: boolean
+      total:
+        type: integer
+    type: object
+  http.TestsResponse:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/domain.Test'
+        type: array
+      total:
+        type: integer
+    type: object
+info:
+  contact:
+    name: Amin Muborakkadamov
+    url: https://github.com/AminVamar
+  description: API для тестирования стажёров Активбанка через Google Forms.
+  title: Activ GForms API
+  version: "1.0"
+paths:
+  /api/v1/admin/forms:
+    get:
+      parameters:
+      - description: open или closed
+        in: query
+        name: status
+        type: string
+      - description: лимит (до 200)
+        in: query
+        name: limit
+        type: integer
+      - description: смещение
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.ListResponse'
+            - properties:
+                items:
+                  items:
+                    $ref: '#/definitions/domain.FormSession'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      summary: Список созданных форм
+      tags:
+      - формы
+    post:
+      consumes:
+      - application/json
+      description: Создаёт Google-форму по тесту. Стажёрам отдавать respondent_url.
+      parameters:
+      - description: тест и время на прохождение
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/http.CreateFormRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/domain.FormSession'
+        "400":
+          description: неверные данные
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "404":
+          description: тест не найден
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "503":
+          description: сервис недоступен
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      summary: Создать форму
+      tags:
+      - формы
+  /api/v1/admin/forms/{id}:
+    get:
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.FormSession'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      summary: Форма по идентификатору
+      tags:
+      - формы
+  /api/v1/admin/forms/{id}/close:
+    post:
+      description: Форма перестаёт принимать ответы.
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.FormSession'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "503":
+          description: Apps Script недоступен
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      summary: Закрыть форму
+      tags:
+      - формы
+  /api/v1/admin/grading/attempts/{id}:
+    get:
+      description: Ответы стажёра с правильными ответами.
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: только непроверенные
+        in: query
+        name: only_pending
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.AttemptResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      summary: Попытка для проверки
+      tags:
+      - проверка
+    patch:
+      consumes:
+      - application/json
+      description: 'Балл: 0, 1 или null.'
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: баллы
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/http.GradeRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.GradeResponse'
+        "400":
+          description: неверный балл
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      summary: Выставить баллы
+      tags:
+      - проверка
+  /api/v1/admin/grading/pending:
+    get:
+      description: Попытки с непроверенными ответами.
+      parameters:
+      - description: фильтр по филиалу
+        in: query
+        name: branch_id
+        type: integer
+      - description: фильтр по тесту
+        in: query
+        name: test_id
+        type: integer
+      - description: лимит (до 200)
+        in: query
+        name: limit
+        type: integer
+      - description: смещение
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.ListResponse'
+            - properties:
+                items:
+                  items:
+                    $ref: '#/definitions/domain.Attempt'
+                  type: array
+              type: object
+      summary: Очередь на ручную проверку
+      tags:
+      - проверка
+  /api/v1/attempts/{id}:
+    get:
+      description: Все ответы и итоговый балл.
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.AttemptResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      summary: Попытка целиком
+      tags:
+      - попытки
+  /api/v1/attempts/{id}/rescore:
+    post:
+      description: Ручные баллы не меняются.
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.RescoreResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "503":
+          description: источник тестов недоступен
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      summary: Пересчёт автоматических баллов
+      tags:
+      - попытки
+  /api/v1/branches:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.BranchesResponse'
+      summary: Филиалы
+      tags:
+      - филиалы
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: филиал
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/http.CreateBranchRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/domain.Branch'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      summary: Добавить филиал
+      tags:
+      - филиалы
+  /api/v1/interns:
+    get:
+      description: Поиск по ФИО или телефону.
+      parameters:
+      - description: часть ФИО или телефона
+        in: query
+        name: search
+        type: string
+      - description: фильтр по филиалу
+        in: query
+        name: branch_id
+        type: integer
+      - description: лимит (до 200)
+        in: query
+        name: limit
+        type: integer
+      - description: смещение
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.ListResponse'
+            - properties:
+                items:
+                  items:
+                    $ref: '#/definitions/domain.InternListItem'
+                  type: array
+              type: object
+      summary: Стажёры
+      tags:
+      - стажёры
+  /api/v1/interns/{id}:
+    get:
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: фильтр по тесту
+        in: query
+        name: test_id
+        type: integer
+      - description: graded или needs_grading
+        in: query
+        name: status
+        type: string
+      - description: лимит
+        in: query
+        name: limit
+        type: integer
+      - description: смещение
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.InternCardResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      summary: Стажёр и его попытки
+      tags:
+      - стажёры
+  /api/v1/tests:
+    get:
+      description: Список тестов из внешнего источника.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.TestsResponse'
+        "503":
+          description: источник тестов недоступен
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      summary: Все тесты из источника
+      tags:
+      - тесты
+  /api/v1/tests/{id}:
+    get:
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Test'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "503":
+          description: источник тестов недоступен
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      summary: Тест по идентификатору
+      tags:
+      - тесты
+  /api/v1/webhook/ping:
+    post:
+      parameters:
+      - description: общий секрет
+        in: header
+        name: X-Gform-Secret
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.PingResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      summary: Проверка секрета вебхука
+      tags:
+      - вебхук
+  /api/v1/webhook/submission:
+    post:
+      consumes:
+      - application/json
+      description: Вызывается из Apps Script, секрет в X-Gform-Secret.
+      parameters:
+      - description: общий секрет
+        in: header
+        name: X-Gform-Secret
+        required: true
+        type: string
+      - description: ответ стажёра
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Submission'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.SubmissionResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "401":
+          description: неверный секрет
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+        "404":
+          description: форма не найдена
+          schema:
+            $ref: '#/definitions/http.ErrorResponse'
+      summary: Приём ответа стажёра
+      tags:
+      - вебхук
+  /health:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.HealthResponse'
+      summary: Health check
+      tags:
+      - служебное
+swagger: "2.0"

@@ -1,0 +1,5 @@
+.env
+.git
+appscript
+*.exe
+*.svg

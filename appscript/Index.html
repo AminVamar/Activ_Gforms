@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+
+  :root {
+    --brand:        #E31E24;
+    --brand-dark:   #B8141A;
+    --brand-soft:   #FDECEC;
+    --ink:          #1F1F1F;
+    --ink-muted:    #6E6E73;
+    --line:         #E6E6EA;
+    --bg:           #F5F5F7;
+    --surface:      #FFFFFF;
+    --danger:       #E31E24;
+    --danger-soft:  #FDECEC;
+    --radius:       20px;
+    --shadow:       0 2px 6px rgba(0,0,0,.04), 0 12px 32px rgba(0,0,0,.06);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 16px/1.55 "Montserrat", "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap { max-width: 760px; margin: 0 auto; padding: 0 16px 64px; }
+
+  .topbar {
+    background: var(--surface);
+    border-bottom: 3px solid var(--brand);
+    padding: 16px 0;
+    box-shadow: 0 2px 12px rgba(0,0,0,.05);
+  }
+  .topbar-inner {
+    max-width: 760px; margin: 0 auto; padding: 0 16px;
+    display: flex; align-items: center; justify-content: space-between; gap: 14px;
+  }
+  .logo { height: 46px; width: auto; flex: none; display: block; }
+  .brand-sub {
+    font-size: 13px; font-weight: 600; color: var(--ink-muted);
+    padding: 6px 14px; border-radius: 999px; background: var(--bg);
+  }
+  h1, h2 { color: var(--ink); font-weight: 700; }
+
+  .timerbar {
+    position: sticky; top: 0; z-index: 20;
+    background: var(--surface);
+    border-bottom: 1px solid var(--line);
+    box-shadow: 0 2px 12px rgba(18,36,28,.06);
+  }
+  .timerbar-inner {
+    max-width: 760px; margin: 0 auto; padding: 12px 16px;
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  }
+  .timer-label { font-size: 13px; color: var(--ink-muted); }
+  .timer-value {
+    font-variant-numeric: tabular-nums;
+    font-size: 24px; font-weight: 700; letter-spacing: .5px;
+    color: var(--brand-dark);
+    padding: 4px 12px; border-radius: 10px; background: var(--brand-soft);
+  }
+  .timer-value.danger {
+    color: var(--danger); background: var(--danger-soft);
+    animation: pulse 1s ease-in-out infinite;
+  }
+  @keyframes pulse { 50% { opacity: .55; } }
+  .progress { height: 3px; background: var(--line); }
+  .progress > i { display: block; height: 100%; background: var(--brand); width: 100%; transition: width 1s linear; }
+  .progress.danger > i { background: var(--danger); }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-top: 20px;
+    box-shadow: var(--shadow);
+  }
+  h1 { font-size: 22px; margin: 0 0 6px; line-height: 1.3; }
+  h2 { font-size: 16px; margin: 0 0 18px; font-weight: 600; }
+  .muted { color: var(--ink-muted); font-size: 14px; margin: 0 0 20px; }
+
+  .field { margin-bottom: 16px; }
+  .field label { display: block; font-size: 14px; font-weight: 600; margin-bottom: 6px; }
+  .field label .req { color: var(--danger); }
+  .hint { font-size: 12.5px; color: var(--ink-muted); margin-top: 5px; }
+  input[type=text], input[type=tel], select, textarea {
+    width: 100%; padding: 11px 13px;
+    border: 1px solid var(--line); border-radius: 12px;
+    font: inherit; color: var(--ink); background: #fff;
+    transition: border-color .15s, box-shadow .15s;
+  }
+  input:focus, select:focus, textarea:focus {
+    outline: none; border-color: var(--brand);
+    box-shadow: 0 0 0 3px rgba(227,30,36,.14);
+  }
+  textarea { min-height: 104px; resize: vertical; }
+  .invalid input, .invalid select, .invalid textarea { border-color: var(--danger); }
+  .error-text { color: var(--danger); font-size: 13px; margin-top: 6px; display: none; }
+  .invalid .error-text { display: block; }
+
+  .q { padding: 20px 0; border-bottom: 1px solid var(--line); }
+  .q:last-child { border-bottom: none; padding-bottom: 4px; }
+  .q-head { display: flex; gap: 12px; margin-bottom: 14px; }
+  .q-num {
+    flex: none; width: 27px; height: 27px; border-radius: 8px;
+    background: var(--brand-soft); color: var(--brand-dark);
+    font-size: 13px; font-weight: 700; display: grid; place-items: center;
+  }
+  .q-text { font-weight: 600; line-height: 1.45; }
+
+  .opt {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px;
+    margin-bottom: 8px; cursor: pointer; transition: background .12s, border-color .12s;
+  }
+  .opt:hover { background: var(--brand-soft); }
+  .opt input { margin: 3px 0 0; accent-color: var(--brand); flex: none; }
+  .opt.checked { border-color: var(--brand); background: var(--brand-soft); }
+
+  .scale { display: flex; flex-wrap: wrap; gap: 7px; }
+  .scale label {
+    flex: 1 1 auto; min-width: 42px;
+    border: 1px solid var(--line); border-radius: 9px;
+    padding: 9px 0; text-align: center; cursor: pointer;
+    font-weight: 600; transition: all .12s;
+  }
+  .scale input { position: absolute; opacity: 0; pointer-events: none; }
+  .scale label.checked { background: var(--brand); border-color: var(--brand); color: #fff; }
+  .scale-ends { display: flex; justify-content: space-between; font-size: 12.5px; color: var(--ink-muted); margin-top: 7px; }
+
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    width: 100%; padding: 14px 20px;
+    background: var(--brand); color: #fff;
+    border: none; border-radius: 999px;
+    font-family: inherit; font-weight: 600; font-size: 16px; line-height: 1;
+    box-shadow: 0 6px 18px rgba(227,30,36,.25); cursor: pointer;
+    transition: background .15s, transform .05s;
+  }
+  .btn:hover  { background: var(--brand-dark); }
+  .btn:active { transform: translateY(1px); }
+  .btn[disabled] { opacity: .6; cursor: default; }
+
+  .note {
+    margin-top: 16px; padding: 13px 15px;
+    background: var(--brand-soft); border-radius: 10px;
+    font-size: 13.5px; color: var(--brand-dark);
+  }
+  .note.warn { background: var(--bg); color: var(--ink-muted); border-left: 3px solid var(--brand); }
+  .card { border: none; }
+  .timer-value { color: var(--brand); }
+  @media (max-width: 520px) { .logo { height: 36px; } .brand-sub { font-size: 12px; } }
+
+  .final { text-align: center; padding: 44px 24px; }
+  .final .icon { font-size: 46px; margin-bottom: 14px; }
+  .final h1 { margin-bottom: 10px; }
+  .final p { color: var(--ink-muted); margin: 0; }
+  .summary {
+    display: inline-block; margin-top: 20px; padding: 12px 20px;
+    background: var(--brand-soft); border-radius: 10px;
+    font-weight: 600; color: var(--brand-dark);
+  }
+
+  .hidden { display: none !important; }
+
+  @media (max-width: 520px) {
+    .card { padding: 18px; }
+    .timer-value { font-size: 20px; }
+    h1 { font-size: 19px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <svg class="logo" viewBox="0 0 645 228" role="img" aria-label="Актив Банк" xmlns="http://www.w3.org/2000/svg">
+      <g fill="#e31e24" fill-rule="evenodd">
+        <path d="m85.1 15l-67.4 160.8c14.4-14.4 32.3-25.3 52.5-31.2l54.2-129.6zm-83.1 197.7h38.5c14.4-20 37.9-33 64.4-33 18.4 0 35.4 6.2 48.8 16.8l-19.5-46.6c-9.300-2.5-19.2-3.8-29.3-3.8-45.8 0-85.3 27.3-102.9 66.6zm107.6-140l58.6 140h39.4l-78.3-187z"/>
+        <path d="m293.9 92.7h-36.4l-7 16.8h-18.6l35-78.4h17.9l35 78.4h-19zm-5.7-13.8l-12.4-30-12.5 30zm72.5-1h-12.6v31.6h-18v-78.4h18v31.7h13l20.6-31.7h19.2l-25.6 37.9 26.4 40.5h-20.6zm108.5-32h-25.1v63.6h-17.9v-63.6h-25v-14.8h68zm11.4-14.8h18.1v51.1l37.4-51.1h17v78.4h-17.9v-50.9l-37.4 50.9h-17.2zm161.1 56.4c0 13.6-10.7 22-30.5 22h-38.6v-78.4h36.5c18.1 0 28.9 7.3 28.9 20.3 0 7.9-4.2 13.9-11.1 17.2 9.5 2.8 14.8 9.3 14.8 18.9zm-51.1-23.9h16.9c7.9 0 12-3.2 12-9.5 0-6.2-4.1-9.5-12-9.5h-16.9zm32.7 22.4c0-6.6-4.4-9.8-12.8-9.8h-19.9v19.8h19.900c8.4 0 12.8-3.2 12.8-10z"/>
+        <path d="m232 129h63.3v14.5h-45.3v16.1h21.7c19 0 29.2 8.1 29.2 23.1 0 15.6-11.6 24.7-31.7 24.7h-37.2zm36.1 65c9.3 0 14.4-3.7 14.4-10.8 0-6.9-4.8-10.3-14.4-10.3h-18.1v21.1zm98.9-3.4h-36.4l-6.9 16.8h-18.6l34.9-78.4h17.9l35.1 78.4h-19.1zm-5.7-13.8l-12.4-30-12.4 30zm114-47.8v78.4h-18.2v-32.1h-35.6v32.1h-18.1v-78.4h18.1v30.9h35.6v-30.9zm50 46.8h-12.6v31.6h-18v-78.4h18v31.7h13l20.6-31.7h19.2l-25.6 37.9 26.4 40.5h-20.6z"/>
+      </g>
+    </svg>
+    <div class="brand-sub">Тестирование стажёров</div>
+  </div>
+</header>
+
+<div class="timerbar hidden" id="timerbar">
+  <div class="timerbar-inner">
+    <span class="timer-label">Осталось времени</span>
+    <span class="timer-value" id="timer">--:--</span>
+  </div>
+  <div class="progress" id="progress"><i id="progress-bar"></i></div>
+</div>
+
+<div class="wrap">
+
+  <section class="card" id="screen-intro">
+    <h1 id="test-title">Тест</h1>
+    <p class="muted" id="test-meta"></p>
+
+    <div class="field" id="f-last">
+      <label>Фамилия <span class="req">*</span></label>
+      <input type="text" id="lastName" autocomplete="family-name">
+      <div class="error-text">Укажите фамилию</div>
+    </div>
+
+    <div class="field" id="f-first">
+      <label>Имя <span class="req">*</span></label>
+      <input type="text" id="firstName" autocomplete="given-name">
+      <div class="error-text">Укажите имя</div>
+    </div>
+
+    <div class="field" id="f-middle">
+      <label>Отчество</label>
+      <input type="text" id="middleName">
+    </div>
+
+    <div class="field" id="f-phone">
+      <label>Номер телефона <span class="req">*</span></label>
+      <input type="tel" id="phone" placeholder="+992 XX XXX XX XX" inputmode="tel">
+      <div class="hint">По номеру телефона система узнаёт вас в следующий раз. Вводите один и тот же номер.</div>
+      <div class="error-text">Укажите номер телефона</div>
+    </div>
+
+    <div class="field" id="f-branch">
+      <label>Филиал <span class="req">*</span></label>
+      <select id="branch"><option value="">— выберите филиал —</option></select>
+      <div class="error-text">Выберите филиал</div>
+    </div>
+
+    <button class="btn" id="btn-start">Начать тест</button>
+    <div class="note warn" id="start-note"></div>
+  </section>
+
+  <section class="card hidden" id="screen-quiz">
+    <h2 id="quiz-title">Вопросы теста</h2>
+    <div id="questions"></div>
+    <button class="btn" id="btn-submit" style="margin-top:20px">Завершить и отправить</button>
+    <div class="note">Ответы отправятся автоматически, когда время выйдет.</div>
+  </section>
+
+  <section class="card final hidden" id="screen-done">
+    <div class="icon">✅</div>
+    <h1>Ответы отправлены</h1>
+    <p id="done-text">Спасибо! Результат будет доступен после проверки.</p>
+    <div class="summary hidden" id="done-summary"></div>
+  </section>
+
+  <section class="card final hidden" id="screen-error">
+    <div class="icon">⚠️</div>
+    <h1 id="error-title">Не удалось отправить</h1>
+    <p id="error-text"></p>
+    <button class="btn" id="btn-retry" style="margin-top:22px;width:auto;padding-left:28px;padding-right:28px">Попробовать снова</button>
+  </section>
+
+</div>
+
+<script>
+  var CONFIG = <?!= config ?>;
+
+  var state = {
+    started: false,
+    submitting: false,
+    submitted: false,
+    endsAt: 0,
+    totalSeconds: (CONFIG.durationMinutes || 0) * 60,
+    tick: null,
+    identity: null
+  };
+
+  var $ = function (id) { return document.getElementById(id); };
+
+  function init() {
+    $('test-title').textContent = CONFIG.title || 'Тест';
+    $('test-meta').textContent =
+      'Вопросов: ' + CONFIG.questions.length + ' · На прохождение: ' + CONFIG.durationMinutes + ' мин.';
+    $('start-note').textContent =
+      'Таймер запустится сразу после нажатия «Начать тест». Остановить его нельзя.';
+
+    var select = $('branch');
+    (CONFIG.branches || []).forEach(function (b) {
+      var opt = document.createElement('option');
+      opt.value = b.name;
+      opt.textContent = b.name;
+      select.appendChild(opt);
+    });
+
+    renderQuestions();
+
+    $('btn-start').addEventListener('click', start);
+    $('btn-submit').addEventListener('click', function () { submit(false); });
+    $('btn-retry').addEventListener('click', function () { submit(state.lastAuto); });
+  }
+
+  function renderQuestions() {
+    var box = $('questions');
+    CONFIG.questions.forEach(function (q, i) {
+      var wrap = document.createElement('div');
+      wrap.className = 'q';
+      wrap.setAttribute('data-item', q.item_id);
+
+      var head = document.createElement('div');
+      head.className = 'q-head';
+      head.innerHTML = '<div class="q-num">' + (i + 1) + '</div>';
+      var text = document.createElement('div');
+      text.className = 'q-text';
+      text.textContent = q.content;
+      head.appendChild(text);
+      wrap.appendChild(head);
+
+      wrap.appendChild(q.type === 1 ? choiceField(q) : q.type === 3 ? scaleField(q) : openField(q));
+      box.appendChild(wrap);
+    });
+  }
+
+  function choiceField(q) {
+    var box = document.createElement('div');
+    (q.options || []).forEach(function (text) {
+      var label = document.createElement('label');
+      label.className = 'opt';
+      var input = document.createElement('input');
+      input.type = 'radio';
+      input.name = 'q' + q.item_id;
+      input.value = text;
+      input.addEventListener('change', function () {
+        Array.prototype.forEach.call(box.querySelectorAll('.opt'), function (o) {
+          o.classList.remove('checked');
+        });
+        label.classList.add('checked');
+      });
+      var span = document.createElement('span');
+      span.textContent = text;
+      label.appendChild(input);
+      label.appendChild(span);
+      box.appendChild(label);
+    });
+    return box;
+  }
+
+  function scaleField(q) {
+    var box = document.createElement('div');
+    var row = document.createElement('div');
+    row.className = 'scale';
+    for (var n = 1; n <= 10; n++) {
+      (function (value) {
+        var label = document.createElement('label');
+        var input = document.createElement('input');
+        input.type = 'radio';
+        input.name = 'q' + q.item_id;
+        input.value = String(value);
+        input.addEventListener('change', function () {
+          Array.prototype.forEach.call(row.querySelectorAll('label'), function (l) {
+            l.classList.remove('checked');
+          });
+          label.classList.add('checked');
+        });
+        label.appendChild(input);
+        label.appendChild(document.createTextNode(String(value)));
+        row.appendChild(label);
+      })(n);
+    }
+    var ends = document.createElement('div');
+    ends.className = 'scale-ends';
+    ends.innerHTML = '<span>1 — минимум</span><span>10 — максимум</span>';
+    box.appendChild(row);
+    box.appendChild(ends);
+    return box;
+  }
+
+  function openField(q) {
+    var ta = document.createElement('textarea');
+    ta.name = 'q' + q.item_id;
+    ta.placeholder = 'Ваш ответ';
+    return ta;
+  }
+
+  function start() {
+    if (!validateIdentity()) {
+      return;
+    }
+    state.identity = {
+      lastName: $('lastName').value.trim(),
+      firstName: $('firstName').value.trim(),
+      middleName: $('middleName').value.trim(),
+      phone: normalizePhone($('phone').value),
+      branchLabel: $('branch').value
+    };
+
+    state.started = true;
+    state.endsAt = Date.now() + state.totalSeconds * 1000;
+
+    $('screen-intro').classList.add('hidden');
+    $('screen-quiz').classList.remove('hidden');
+    $('timerbar').classList.remove('hidden');
+
+    renderTimer();
+    state.tick = setInterval(renderTimer, 250);
+    window.scrollTo(0, 0);
+  }
+
+  function validateIdentity() {
+    var ok = true;
+    ok = check('f-last',   $('lastName').value.trim() !== '')   && ok;
+    ok = check('f-first',  $('firstName').value.trim() !== '')  && ok;
+    ok = check('f-phone',  $('phone').value.trim() !== '')      && ok;
+    ok = check('f-branch', $('branch').value !== '')            && ok;
+    return ok;
+  }
+
+  function check(fieldId, condition) {
+    $(fieldId).classList.toggle('invalid', !condition);
+    return condition;
+  }
+
+  function normalizePhone(raw) {
+    var s = String(raw || '').replace(/[^\d+]/g, '');
+    if (s.indexOf('+') > 0) {
+      s = s.replace(/\+/g, '');
+    }
+    return s;
+  }
+
+  function renderTimer() {
+    var left = Math.max(0, Math.round((state.endsAt - Date.now()) / 1000));
+    var mm = String(Math.floor(left / 60)).padStart(2, '0');
+    var ss = String(left % 60).padStart(2, '0');
+
+    $('timer').textContent = mm + ':' + ss;
+    $('progress-bar').style.width = (state.totalSeconds ? (left / state.totalSeconds) * 100 : 0) + '%';
+
+    var danger = left <= 60;
+    $('timer').classList.toggle('danger', danger);
+    $('progress').classList.toggle('danger', danger);
+
+    if (left <= 0) {
+      clearInterval(state.tick);
+      state.tick = null;
+      submit(true);
+    }
+  }
+
+  function collectAnswers() {
+    return CONFIG.questions.map(function (q) {
+      var name = 'q' + q.item_id;
+      var value = '';
+      if (q.type === 2) {
+        var ta = document.querySelector('textarea[name="' + name + '"]');
+        value = ta ? ta.value.trim() : '';
+      } else {
+        var checked = document.querySelector('input[name="' + name + '"]:checked');
+        value = checked ? checked.value : '';
+      }
+      return { itemId: q.item_id, answer: value };
+    });
+  }
+
+  function submit(auto) {
+    if (state.submitting || state.submitted) {
+      return;
+    }
+    state.submitting = true;
+    state.lastAuto = auto;
+
+    if (state.tick) {
+      clearInterval(state.tick);
+      state.tick = null;
+    }
+
+    var btn = $('btn-submit');
+    btn.disabled = true;
+    btn.textContent = auto ? 'Время вышло, отправляем…' : 'Отправляем…';
+
+    var payload = {
+      formId: CONFIG.formId,
+      lastName: state.identity.lastName,
+      firstName: state.identity.firstName,
+      middleName: state.identity.middleName,
+      phone: state.identity.phone,
+      branchLabel: state.identity.branchLabel,
+      autoSubmitted: !!auto,
+      answers: collectAnswers()
+    };
+
+    google.script.run
+      .withSuccessHandler(function () { onSubmitted(auto); })
+      .withFailureHandler(onFailure)
+      .submitAnswers(payload);
+  }
+
+  function onSubmitted(auto) {
+    state.submitting = false;
+    state.submitted = true;
+
+    $('screen-quiz').classList.add('hidden');
+    $('screen-error').classList.add('hidden');
+    $('timerbar').classList.add('hidden');
+    $('screen-done').classList.remove('hidden');
+    $('done-text').textContent = auto
+      ? 'Время вышло — отправлено всё, что вы успели заполнить.'
+      : 'Спасибо! Результат будет доступен после проверки.';
+    window.scrollTo(0, 0);
+  }
+
+  function onFailure(err) {
+    state.submitting = false;
+
+    var message = String((err && err.message) || err || '');
+    $('screen-quiz').classList.add('hidden');
+    $('screen-error').classList.remove('hidden');
+
+    if (message.indexOf('закрыт') !== -1) {
+      $('error-title').textContent = 'Тест закрыт';
+      $('error-text').textContent = 'Эта форма больше не принимает ответы.';
+      $('btn-retry').classList.add('hidden');
+      $('timerbar').classList.add('hidden');
+    } else if (message.indexOf('недействительна') !== -1) {
+      $('error-title').textContent = 'Ссылка недействительна';
+      $('error-text').textContent = 'Проверьте ссылку или обратитесь к администратору.';
+      $('btn-retry').classList.add('hidden');
+      $('timerbar').classList.add('hidden');
+    } else {
+      $('error-title').textContent = 'Не удалось отправить';
+      $('error-text').textContent = 'Что-то пошло не так: ' + message;
+      $('btn-retry').classList.remove('hidden');
+    }
+    $('btn-submit').disabled = false;
+    $('btn-submit').textContent = 'Завершить и отправить';
+    window.scrollTo(0, 0);
+  }
+
+  init();
+</script>
+</body>
+</html>
