@@ -135,6 +135,7 @@ function createForm(payload) {
       phone: String(phone.getId()),
       branch: String(branchItem.getId())
     },
+    webhook_url: payload.webhook_url || '',
     last_sync: 0,
     created_at: new Date().toISOString()
   };
@@ -359,7 +360,8 @@ function submissionFromFormResponse_(meta, formResponse) {
 
 function sendToBackend_(body) {
   var props = PropertiesService.getScriptProperties();
-  var url = props.getProperty(PROP_WEBHOOK);
+  var meta = body.form_id ? readForm_(body.form_id) : null;
+  var url = (meta && meta.webhook_url) || props.getProperty(PROP_WEBHOOK);
   var secret = props.getProperty(PROP_SECRET);
   if (!url || !secret) {
     return false;

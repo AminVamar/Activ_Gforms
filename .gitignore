@@ -1,6 +1,5 @@
 .env
 *.exe
 /tmp/
-.claude/
 .idea/
 .vscode/

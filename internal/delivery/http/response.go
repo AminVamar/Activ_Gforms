@@ -3,6 +3,7 @@ package http
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"log/slog"
 	"net/http"
 	"strconv"
@@ -37,6 +38,7 @@ func writeJSON(w http.ResponseWriter, status int, body any) {
 func writeError(w http.ResponseWriter, r *http.Request, err error) {
 	switch {
 	case errors.Is(err, domain.ErrValidation):
+		slog.Warn("некорректный запрос", "error", err, "path", r.URL.Path)
 		writeJSON(w, http.StatusBadRequest, ErrorResponse{Error: cleanMessage(err)})
 	case errors.Is(err, domain.ErrUnauthorized):
 		writeJSON(w, http.StatusUnauthorized, ErrorResponse{Error: "неверный секрет"})
@@ -131,7 +133,7 @@ func decodeJSON(r *http.Request, dst any) error {
 func decodeJSONLoose(r *http.Request, dst any) error {
 	dec := json.NewDecoder(http.MaxBytesReader(nil, r.Body, 8<<20))
 	if err := dec.Decode(dst); err != nil {
-		return domain.ErrValidation
+		return fmt.Errorf("%w: %v", domain.ErrValidation, err)
 	}
 	return nil
 }
