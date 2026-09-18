@@ -17,7 +17,7 @@ cp .env.example .env
 В `.env` указать:
 
 - `HTTP_PORT` — порт API
-- `TEST_PORT` — порт сервиса, откуда берутся тесты (`GET http://localhost:<TEST_PORT>/tests`)
+- `TEST_SOURCE_URL` — полный адрес, откуда GET-ом берутся тесты, например `http://10.65.10.22:8525/api/Test`
 - `NGROK_AUTHTOKEN` — токен ngrok
 
 Запуск:
