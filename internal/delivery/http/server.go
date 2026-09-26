@@ -20,6 +20,7 @@ type Server struct {
 	interns     *usecase.Interns
 	branches    domain.BranchRepository
 	secret      string
+	corsOrigins []string
 }
 
 type Deps struct {
@@ -30,6 +31,7 @@ type Deps struct {
 	Interns       *usecase.Interns
 	Branches      domain.BranchRepository
 	WebhookSecret string
+	CORSOrigins   []string
 }
 
 func NewServer(d Deps) *Server {
@@ -41,6 +43,7 @@ func NewServer(d Deps) *Server {
 		interns:     d.Interns,
 		branches:    d.Branches,
 		secret:      d.WebhookSecret,
+		corsOrigins: d.CORSOrigins,
 	}
 }
 
@@ -85,7 +88,7 @@ func (s *Server) Router() http.Handler {
 	r.MethodNotAllowedHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		writeJSON(w, http.StatusMethodNotAllowed, ErrorResponse{Error: "метод не поддерживается"})
 	})
-	return r
+	return corsMiddleware(s.corsOrigins)(r)
 }
 
 type HealthResponse struct {

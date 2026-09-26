@@ -71,6 +71,7 @@ func run() error {
 		Interns:       usecase.NewInterns(internRepo, attemptRepo),
 		Branches:      branchRepo,
 		WebhookSecret: cfg.WebhookSecret,
+		CORSOrigins:   cfg.CORSAllowedOrigins,
 	})
 
 	srv := &stdhttp.Server{

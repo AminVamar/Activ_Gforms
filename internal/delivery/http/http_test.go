@@ -250,3 +250,42 @@ func TestPanicIsContained(t *testing.T) {
 		t.Fatal("текст внутренней ошибки не должен уходить наружу")
 	}
 }
+
+func TestCORSPreflight(t *testing.T) {
+	h, _, _ := newTestServer(stubSource{})
+	rec := do(t, h, http.MethodOptions, "/api/v1/admin/forms", "", map[string]string{
+		"Origin":                         "http://localhost:3000",
+		"Access-Control-Request-Method":  http.MethodPost,
+		"Access-Control-Request-Headers": "Content-Type",
+	})
+	if rec.Code != http.StatusNoContent {
+		t.Fatalf("код %d, ожидался 204", rec.Code)
+	}
+	if got := rec.Header().Get("Access-Control-Allow-Origin"); got != "*" {
+		t.Fatalf("Access-Control-Allow-Origin = %q, ожидалось *", got)
+	}
+	if !strings.Contains(rec.Header().Get("Access-Control-Allow-Methods"), http.MethodPatch) {
+		t.Fatal("в Access-Control-Allow-Methods нет PATCH")
+	}
+}
+
+func TestCORSAllowedOrigins(t *testing.T) {
+	next := http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) { w.WriteHeader(http.StatusOK) })
+	h := corsMiddleware([]string{"https://front.example.com/"})(next)
+
+	cases := map[string]string{
+		"https://front.example.com": "https://front.example.com",
+		"https://evil.example.com":  "",
+	}
+	for origin, want := range cases {
+		t.Run(origin, func(t *testing.T) {
+			rec := do(t, h, http.MethodGet, "/api/v1/tests", "", map[string]string{"Origin": origin})
+			if rec.Code != http.StatusOK {
+				t.Fatalf("код %d, ожидался 200", rec.Code)
+			}
+			if got := rec.Header().Get("Access-Control-Allow-Origin"); got != want {
+				t.Fatalf("Access-Control-Allow-Origin = %q, ожидалось %q", got, want)
+			}
+		})
+	}
+}

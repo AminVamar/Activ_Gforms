@@ -29,6 +29,8 @@ type Config struct {
 
 	PublicWebhookURL string
 	WebhookSecret    string
+
+	CORSAllowedOrigins []string
 }
 
 func Load() (*Config, error) {
@@ -59,6 +61,7 @@ func Load() (*Config, error) {
 	}
 
 	cfg.WebhookSecret = env("WEBHOOK_SECRET", cfg.AppScriptSecret)
+	cfg.CORSAllowedOrigins = envList("CORS_ALLOWED_ORIGINS", []string{"*"})
 
 	if err := cfg.validate(); err != nil {
 		return nil, err
@@ -105,6 +108,23 @@ func env(key, def string) string {
 		return v
 	}
 	return def
+}
+
+func envList(key string, def []string) []string {
+	raw := env(key, "")
+	if raw == "" {
+		return def
+	}
+	var out []string
+	for _, part := range strings.Split(raw, ",") {
+		if v := strings.TrimSpace(part); v != "" {
+			out = append(out, v)
+		}
+	}
+	if len(out) == 0 {
+		return def
+	}
+	return out
 }
 
 func envInt(key string, def int) (int, error) {

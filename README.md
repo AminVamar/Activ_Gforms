@@ -19,6 +19,7 @@ cp .env.example .env
 - `HTTP_PORT` — порт API
 - `TEST_SOURCE_URL` — полный адрес, откуда GET-ом берутся тесты, например `http://10.65.10.22:8525/api/Test`
 - `NGROK_AUTHTOKEN` — токен ngrok
+- `CORS_ALLOWED_ORIGINS` — адреса фронтенда через запятую, например `http://localhost:3000,https://front.example.com`. По умолчанию `*`
 
 Запуск:
 
@@ -32,6 +33,8 @@ docker compose up -d --build
 - Swagger: `http://localhost:<HTTP_PORT>/swagger/index.html`
 - Публичный адрес: `https://<NGROK_DOMAIN>`
 - Панель ngrok: `http://localhost:4040`
+
+Описание API для фронтенда: `API_для_фронтенда.docx`.
 
 Логи и остановка:
 
