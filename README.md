@@ -34,8 +34,6 @@ docker compose up -d --build
 - Публичный адрес: `https://<NGROK_DOMAIN>`
 - Панель ngrok: `http://localhost:4040`
 
-Описание API для фронтенда: `API_для_фронтенда.docx`.
-
 Логи и остановка:
 
 ```bash
